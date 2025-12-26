@@ -217,24 +217,26 @@ class Similarity:
             page_end = ""
         if parse_title:
             title = parse_string(title)
+        should_list = []
+        if title:
+            should_list.append({"match": {"title": {"query": title, "operator": "OR"}}})
+        if source:
+            should_list.append({"match": {"source": {"query": source, "operator": "AND"}}})
+        if year:
+            should_list.append({"term": {"year": year}})
+        if volume:
+            should_list.append({"term": {"volume": volume}})
+        if issue:
+            should_list.append({"term": {"issue": issue}})
+        if page_start:
+            should_list.append({"term": {"page_start": page_start}})
+        if page_end:
+            should_list.append({"term": {"page_end": page_end}})
+
         body = {
             "query": {
                 "bool": {
-                    "should": [
-                        {"match": {"title":  {
-                            "query": title,
-                            "operator": "OR"
-                        }}},
-                        {"match": {"source":  {
-                            "query": source,
-                            "operator": "AND"
-                        }}},
-                        {"term":  {"year": year}},
-                        {"term":  {"volume": volume}},
-                        {"term":  {"issue": issue}},
-                        {"term":  {"page_start": page_start}},
-                        {"term":  {"page_end": page_end}},
-                    ],
+                    "should": should_list,
                 }
             },
             "size": 20,
